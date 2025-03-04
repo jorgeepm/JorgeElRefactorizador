@@ -1,76 +1,42 @@
-public class CodigoParaRefactorizar{
+public class CodigoRefactorizado {
 
-    public double calculoIva(double precioBase) {
-        double precioFinal;
-        precioFinal = precioBase + (0.21 * precioBase); //el IVA cambia?
-        return precioFinal;
+    private static final double IVA = 0.21;
+
+    public double calcularPrecioConIva(double precioBase) {
+        return precioBase * (1 + IVA);
     }
 
-    public double calculoIva(double precioBase, double porcentajeDescuento) {
-        double precioFinal;
-        precioFinal = precioBase + (0.21 * precioBase); //esto no lo habiamos hecho ya?
-        precioFinal = precioFinal - (precioFinal * porcentajeDescuento/100);
-        return precioFinal;
+    public double calcularPrecioConIvaYDescuento(double precioBase, double porcentajeDescuento) {
+        double precioConIva = calcularPrecioConIva(precioBase);
+        return precioConIva * (1 - porcentajeDescuento / 100);
     }
 
-    public int diasMes(int mes, int anio) {
-
-        int diasMes = 0;
-
+    public int obtenerDiasDelMes(int mes, int anio) {
         switch (mes) {
-
-            case 1:
-
-            case 3:
-
-            case 5:
-
-            case 7:
-
-            case 8:
-
-            case 10:
-
-            case 12:
-                diasMes = 31;
-                break;
-
-            case 4:
-
-            case 6:
-
-            case 9:
-
-            case 11:
-                diasMes = 30;
-                break;
-
+            case 1: case 3: case 5: case 7: case 8: case 10: case 12:
+                return 31;
+            case 4: case 6: case 9: case 11:
+                return 30;
             case 2:
-                if (
-                        (anio % 400 == 0) ||((anio % 4 == 0) && (anio % 100 != 0))  //esto se entiende?
-                )
-
-                    diasMes = 29;
-
-                else
-                    diasMes = 28;
-
-                break;
-
+                return esBisiesto(anio) ? 29 : 28;
+            default:
+                throw new IllegalArgumentException("Mes inválido: " + mes);
         }
-
-        return diasMes;
-
     }
 
+    private boolean esBisiesto(int anio) {
+        return (anio % 400 == 0) || ((anio % 4 == 0) && (anio % 100 != 0));
+    }
 
-    public double subidaPrecio(double precioBase, double subida) {
-        precioBase = precioBase+subida;
-        double precioConIVA = calculoIva(precioBase);
-        // es buena práctica que las salidas se externalicen y no se mezcle con la lógica
-        // potencial motivo de refactorización
-        System.out.println("El nuevo precio base es "+precioBase);
-        System.out.println("El precio con IVA es "+precioConIVA);
-        return precioBase;
+    public double aplicarSubidaDePrecio(double precioBase, double subida) {
+        double nuevoPrecioBase = precioBase + subida;
+        double precioConIva = calcularPrecioConIva(nuevoPrecioBase);
+        imprimirPrecios(nuevoPrecioBase, precioConIva);
+        return nuevoPrecioBase;
+    }
+
+    private void imprimirPrecios(double precioBase, double precioConIva) {
+        System.out.println("El nuevo precio base es " + precioBase);
+        System.out.println("El precio con IVA es " + precioConIva);
     }
 }
